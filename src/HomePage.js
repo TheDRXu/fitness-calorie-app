@@ -1,8 +1,9 @@
 // UserProfile.js (or any relevant component)
 import React, { useState, useEffect } from "react";
-import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [userCal, setUserCal] = useState(null);
   const [userFitCal, setUserFitCal] = useState(null);
@@ -147,7 +148,7 @@ const HomePage = () => {
           totalCaloriesDay += entry.totalCalories;
         });
       });
-      
+
       console.log("Total Calories for All Users: ", totalCaloriesDay);
       setUserCal(userData);
       setCalDay(totalCaloriesDay);
@@ -183,7 +184,7 @@ const HomePage = () => {
       let fitCaloriesDay = 0;
       const userData = await response.json();
       userData.forEach((user) => {
-          fitCaloriesDay += user.totalCalories;
+        fitCaloriesDay += user.totalCalories;
       });
       console.log(userData);
       console.log("Total Calories for All Users: ", fitCaloriesDay);
@@ -198,6 +199,10 @@ const HomePage = () => {
       setShowCal(!showCal);
     }
   };
+
+  const HandleGraph = async (e) =>{
+    navigate('/Graph');
+  }
 
   return (
     <div>
@@ -284,9 +289,7 @@ const HomePage = () => {
       ) : (
         <p>{error || "No entries on this date"}</p>
       )}
-      <p>
-        Total Calories this day: {calDay}
-      </p>
+      <p>Total Calories this day: {calDay}</p>
       <h1>Fitness</h1>
       <form onSubmit={handleSubmitFitness}>
         <label>
@@ -341,8 +344,11 @@ const HomePage = () => {
       ) : (
         <p>{error || "No entries on this date"}</p>
       )}
+
+      <button type="submit" onClick={HandleGraph}>
+        Go to Graph
+      </button>
     </div>
-    
   );
 };
 

@@ -67,7 +67,6 @@ function LoginPage() {
     }
   };
   
-  
 
   // const handleOnSubmit2 = async (e) => {
   //   e.preventDefault();
@@ -159,7 +158,6 @@ function LoginPage() {
           Submit
         </button>
       </form>
-
       
       {/* <form>
         <input

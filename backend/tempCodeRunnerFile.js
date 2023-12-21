@@ -1,1 +1,1 @@
-a
+ries/:userId/7/:dateCal
