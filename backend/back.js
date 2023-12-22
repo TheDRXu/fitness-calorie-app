@@ -161,22 +161,39 @@ app.get("/users/total-calories/:userId/:dateCal", async (req, res) => {
   }
 });
 
-app.get("/users/total-calories/:userId/7/:dateCal", async (req, res) => {
+app.get("/users/total-calories/:userId/2/:dateFit", async (req, res) => {
   try {
     const userId = req.params.userId;
-    const dateCal = req.params.dateCal;
-    const user = await CalorieEntry.find({
+    const dateFit = req.params.dateFit;
+    const user = await FitnessEntry.find({
       user: userId,
-      "entries.date": { $eq: new Date(dateCal) },
+      date: { $eq: new Date(dateFit) },
     });
-    console.log(user);
+    
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    const responseData = user.map((user) => ({
+      userid: user.user,
+      date: user.date,
+      activity: user.activity,
+      totalCalories: user.totalCalories,
+    }));
+
+    res.json(responseData);
+  } catch (error) {
+    console.error("Error finding user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/users/total-calories/:userId/3/:dateCal", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const dateCal = req.params.dateCal;
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-    // Ensure consistent date formatting
     const formattedDateCal = new Date(Date.parse(dateCal));
 
     const responseData = await CalorieEntry.find({
@@ -184,6 +201,33 @@ app.get("/users/total-calories/:userId/7/:dateCal", async (req, res) => {
       "entries.date": { $gte: sevenDaysAgo, $lte: formattedDateCal },
     });
 
+    res.json(responseData);
+  } catch (error) {
+    console.error("Error finding user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/users/total-calories/:userId/4/:dateFit", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const dateFit = req.params.dateFit;
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const formattedDateCal = new Date(Date.parse(dateFit));
+
+    const user = await FitnessEntry.find({
+      user: userId,
+      date: { $gte: sevenDaysAgo, $lte: formattedDateCal },
+    });
+
+    const responseData = user.map((user) => ({
+      userid: user.user,
+      date: user.date,
+      activity: user.activity,
+      totalCalories: user.totalCalories,
+    }));
+    console.log(responseData);
     res.json(responseData);
   } catch (error) {
     console.error("Error finding user:", error);

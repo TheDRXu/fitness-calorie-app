@@ -27,14 +27,28 @@ const options = {
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      text: 'Food Calories Chart last 7 days',
     },
   },
 };
 
+const options2 = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: 'top',
+    },
+    title: {
+      display: true,
+      text: 'Fitness Calories Chart last 7 days',
+    },
+  },
+};
+
+const date = new Date();
 const userId = localStorage.getItem("user_id");
 const response = await fetch(
-	`http://localhost:5000/users/total-calories/${userId}/7/2023-12-22`
+	`http://localhost:5000/users/total-calories/${userId}/3/${date}`
 );
 const userData = await response.json();
 const caloriesArray = userData.map((item) => item.entries.map((entry) => entry.totalCalories));
@@ -43,13 +57,10 @@ const dateArray = userData.map((item) => item.entries.map((entry) => entry.date)
 const accumulatedData = dateArray
   .flat()
   .reduce((acc, date, index) => {
-    // Check for existing entry with same date
     const existingEntry = acc.find((entry) => entry.date === date);
     if (existingEntry) {
-      // If found, update the existing entry's totalCalories
       existingEntry.totalCalories += caloriesArray.flat()[index];
     } else {
-      // Otherwise, create a new entry
       acc.push({ date, totalCalories: caloriesArray.flat()[index] });
     }
     return acc;
@@ -61,32 +72,70 @@ const dateArray2 = accumulatedData.map((entry) => {
 });
 
 const reversedTotalCalories = totalCaloriesArray.reverse();
-
 const reversedDateArray2 = dateArray2.reverse();
-  
-console.log(accumulatedData);
 
+const response2 = await fetch(
+	`http://localhost:5000/users/total-calories/${userId}/4/${date}`
+);
+const fitData = await response2.json();
+const caloriesArray2 = fitData.map((item) => item.totalCalories);
+const dateArray3 = fitData.map((item)  => item.date);
 
-const labels = dateArray2;
+const accumulatedData2 = dateArray3
+  .flat()
+  .reduce((acc, date, index) => {
+    const existingEntry = acc.find((entry) => entry.date === date);
+    if (existingEntry) {
+      existingEntry.totalCalories += caloriesArray2.flat()[index];
+    } else {
+      acc.push({ date, totalCalories: caloriesArray2.flat()[index] });
+    }
+    return acc;
+  }, []);
+const totalCaloriesArray2 = accumulatedData2.map((entry) => entry.totalCalories);
+const dateArray4 = accumulatedData2.map((entry) => {
+	const formattedDate = entry.date.slice(5, 10); // Extract month and day
+	return formattedDate;
+});
+
+const reversedTotalCalories2 = totalCaloriesArray2.reverse();
+const reversedDateArray4 = dateArray4.reverse();
+
+const labels = reversedDateArray2;
+const labels2 = reversedDateArray4;
+console.log(reversedDateArray4,reversedTotalCalories2);
 
 const data = {
   labels,
   datasets: [
     {
-      label: 'Dataset 1',
+      label: 'Total Calories',
       data: reversedTotalCalories,
       backgroundColor: [
-		'rgb(255, 99, 132)',
-		'rgb(54, 162, 235)',
-		'rgb(255, 205, 86)'
+		'rgb(255, 99, 132)'
 	  ],
     },
-
   ],
 };
 
-function App() {
-  return <Bar options={options} data={data} />;
-}
+const data2 = {
+  labels2,
+  datasets: [
+    {
+      label: 'Total Calories',
+      data: reversedTotalCalories2,
+      backgroundColor: [
+		'rgb(132,99,255)'
+	  ],
+    },
+  ],
+};
 
-export default App;
+const Graph = () =>{
+  return(
+    <Bar options={options} data={data}></Bar>
+    // <Bar options={options2} data={data2} />
+  );
+};
+
+export default Graph;

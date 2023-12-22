@@ -204,6 +204,10 @@ const HomePage = () => {
     navigate('/Graph');
   }
 
+  const HandleGraph2 = async (e) =>{
+    navigate('/Graph2');
+  }
+
   return (
     <div>
       <h2>User Profile</h2>
@@ -347,6 +351,9 @@ const HomePage = () => {
 
       <button type="submit" onClick={HandleGraph}>
         Go to Graph
+      </button>
+      <button type="submit" onClick={HandleGraph2}>
+        Go to Graph 2
       </button>
     </div>
   );
