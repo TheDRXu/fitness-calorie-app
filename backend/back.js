@@ -235,6 +235,54 @@ app.get("/users/total-calories/:userId/4/:dateFit", async (req, res) => {
   }
 });
 
+app.get("/users/total-calories/:userId/5/:dateCal", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const dateCal = req.params.dateCal;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+
+    const formattedDateCal = new Date(Date.parse(dateCal));
+
+    const responseData = await CalorieEntry.find({
+      user: userId,
+      "entries.date": { $gte: oneMonthAgo, $lte: formattedDateCal },
+    });
+
+    res.json(responseData);
+  } catch (error) {
+    console.error("Error finding user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+app.get("/users/total-calories/:userId/6/:dateFit", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const dateFit = req.params.dateFit;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setDate(oneMonthAgo.getDate() - 30);
+    const formattedDateCal = new Date(Date.parse(dateFit));
+
+    const user = await FitnessEntry.find({
+      user: userId,
+      date: { $gte: oneMonthAgo, $lte: formattedDateCal },
+    });
+
+    const responseData = user.map((user) => ({
+      userid: user.user,
+      date: user.date,
+      activity: user.activity,
+      totalCalories: user.totalCalories,
+    }));
+    console.log(responseData);
+    res.json(responseData);
+  } catch (error) {
+    console.error("Error finding user:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 app.post("/register", async (req, resp) => {
   //register user
   try {
